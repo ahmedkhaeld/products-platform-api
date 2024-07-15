@@ -3,7 +3,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { UserModule } from './user/user.module';
 import Config from '../config/Configuration';
+import { User } from './user/entities/user.entity';
 
 @Module({
   imports: [
@@ -18,9 +20,11 @@ import Config from '../config/Configuration';
       username: Config().postgres.user,
       password: Config().postgres.pass,
       database: Config().postgres.db,
-      entities: [],
+      entities: [User],
       synchronize: true,
+      logging: true,
     }),
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
