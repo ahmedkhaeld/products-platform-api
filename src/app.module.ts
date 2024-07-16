@@ -22,7 +22,6 @@ import { User } from './user/entities/user.entity';
       database: Config().postgres.db,
       entities: [User],
       synchronize: true,
-      logging: true,
     }),
     UserModule,
   ],
