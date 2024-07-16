@@ -16,5 +16,6 @@ import { IsUsernameExistValidator } from './custome-validaton/username-exists.va
     IsUserEmailExistValidator,
     IsUsernameExistValidator,
   ],
+  exports: [UserService],
 })
 export class UserModule {}
