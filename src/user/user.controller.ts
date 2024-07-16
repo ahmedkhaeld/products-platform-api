@@ -12,14 +12,17 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto, UpdateUserParamDto } from './dto/update-user.dto';
 import { GetUserDto } from './dto/get-user.dto';
 import { DeleteUserDto } from './dto/delete-user.dto';
+import { SuccessCreatedResponse } from '../common/http-responses/success-created.response';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.createUser(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    const response = await this.userService.createUser(createUserDto);
+
+    return new SuccessCreatedResponse(response.data);
   }
 
   @Get()

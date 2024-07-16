@@ -26,6 +26,9 @@ async function bootstrap() {
   // finally will return a formatted error message
   app.useGlobalPipes(
     new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
       exceptionFactory: (errors: ValidationError[]) =>
         ValidationErrorsFormat(errors),
     }),

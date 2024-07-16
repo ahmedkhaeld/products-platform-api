@@ -8,35 +8,35 @@ import {
 } from 'class-validator';
 import { UserService } from '../user.service';
 
-@ValidatorConstraint({ name: 'IsUserIdExist', async: true })
+@ValidatorConstraint({ name: 'IsUserEmailExist', async: true })
 @Injectable()
-export class IsUserIdExistValidator implements ValidatorConstraintInterface {
+export class IsUserEmailExistValidator implements ValidatorConstraintInterface {
   constructor(private userService: UserService) {}
 
   public async validate(value: string) {
     if (value == null) return false;
 
-    const userDoc = await this.userService.getUser(value);
-    return userDoc != null;
+    const userDoc = await this.userService.getUserByEmail(value);
+    return !userDoc;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public defaultMessage(validationArguments?: ValidationArguments): string {
     return JSON.stringify({
-      en: 'user does not exists',
-      ar: 'user does not exists',
+      en: 'user email already exists',
+      ar: 'user email already exists',
     });
   }
 }
 
-export function IsUserIdExist(validationOptions?: ValidationOptions) {
+export function IsUserEmailExist(validationOptions?: ValidationOptions) {
   return function (object: any, propertyName: string) {
     registerDecorator({
-      name: 'IsUserIdExist',
+      name: 'IsUserEmailExist',
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      validator: IsUserIdExistValidator,
+      validator: IsUserEmailExistValidator,
     });
   };
 }

@@ -2,6 +2,7 @@ import { ValidationError } from 'class-validator';
 import { UnprocessableEntityException } from '@nestjs/common';
 import { Exceptions } from './errors/exceptions';
 import { ValidationErrorMessage } from './errors/validations';
+
 /**
  * Formats validation errors from class-validator into a structured format for NestJS global pipes.
  *
@@ -45,7 +46,15 @@ export function ValidationErrorsFormat(
         myValidationErrors[key] = [];
         const constraints = Object.keys(validationError.constraints);
         for (const constraint of constraints) {
-          myValidationErrors[key].push(ValidationErrorMessage[constraint]);
+          // Ensure the constraint exists in ValidationErrorMessage
+          if (ValidationErrorMessage[constraint]) {
+            myValidationErrors[key].push(ValidationErrorMessage[constraint]);
+          } else {
+            // Fallback to the default message if the constraint is not found
+            myValidationErrors[key].push(
+              validationError.constraints[constraint],
+            );
+          }
         }
       }
     }

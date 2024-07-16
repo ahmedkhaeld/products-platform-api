@@ -5,6 +5,9 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { GetUserDto } from './dto/get-user.dto';
+import { ServiceResponse } from '../common/service-response';
+import * as bcryptjs from 'bcryptjs';
+
 @Injectable()
 export class UserService {
   constructor(
@@ -17,7 +20,11 @@ export class UserService {
    * we have defined what are the keys we are expecting from body
    * @returns promise of user
    */
-  createUser(createUserDto: CreateUserDto): Promise<User> {
+  async createUser(createUserDto: CreateUserDto): Promise<ServiceResponse> {
+    const serviceResponse: ServiceResponse = { data: null, error: null };
+    // hash the password
+    const salt = bcryptjs.genSaltSync(10);
+    createUserDto.password = bcryptjs.hashSync(createUserDto.password, salt);
     const user: User = new User();
     user.firstName = createUserDto.firstName;
     user.middleName = createUserDto.middleName;
@@ -27,14 +34,19 @@ export class UserService {
     user.password = createUserDto.password;
     user.gender = createUserDto.gender;
     user.dob = createUserDto.dob;
-    return this.userRepository.save(user);
+    const newUser = await this.userRepository.save(user);
+
+    serviceResponse.data = {
+      user: newUser,
+    };
+    return serviceResponse;
   }
 
   /**
    * this function is used to get all the user's list
    * @returns promise of array of users
    */
-  findAllUser(): Promise<User[]> {
+  async findAllUser(): Promise<User[]> {
     return this.userRepository.find();
   }
 
@@ -43,9 +55,17 @@ export class UserService {
    * @returns promise of user
    * @param id
    */
-  getUser(id: string): Promise<User> {
+  async getUser(id: string): Promise<User> {
     const _id = parseInt(id);
     return this.userRepository.findOneBy({ id: _id });
+  }
+
+  async getUserByUsername(username: string): Promise<User> {
+    return this.userRepository.findOneBy({ username: username });
+  }
+
+  async getUserByEmail(email: string): Promise<User> {
+    return this.userRepository.findOneBy({ email: email });
   }
 
   /**
@@ -55,7 +75,7 @@ export class UserService {
    * @param updateUserDto this is partial type of createUserDto.
    * @returns promise of update user
    */
-  updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+  async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const _id = parseInt(id);
     const user: User = new User();
     user.firstName = updateUserDto.firstName;
