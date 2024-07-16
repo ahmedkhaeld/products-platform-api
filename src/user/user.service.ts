@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto, UpdateUserParamDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { GetUserDto } from './dto/get-user.dto';
 import { ServiceResponse } from '../common/service-response';
 import * as bcryptjs from 'bcryptjs';
 
@@ -26,14 +25,9 @@ export class UserService {
     const salt = bcryptjs.genSaltSync(10);
     createUserDto.password = bcryptjs.hashSync(createUserDto.password, salt);
     const user: User = new User();
-    user.firstName = createUserDto.firstName;
-    user.middleName = createUserDto.middleName;
-    user.lastName = createUserDto.lastName;
     user.email = createUserDto.email;
     user.username = createUserDto.username;
     user.password = createUserDto.password;
-    user.gender = createUserDto.gender;
-    user.dob = createUserDto.dob;
     const newUser = await this.userRepository.save(user);
 
     serviceResponse.data = {
@@ -78,14 +72,9 @@ export class UserService {
   async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const _id = parseInt(id);
     const user: User = new User();
-    user.firstName = updateUserDto.firstName;
-    user.middleName = updateUserDto.middleName;
-    user.lastName = updateUserDto.lastName;
     user.email = updateUserDto.email;
     user.username = updateUserDto.username;
     user.password = updateUserDto.password;
-    user.dob = updateUserDto.dob;
-    user.gender = updateUserDto.gender;
     user.id = _id;
     return this.userRepository.save(user);
   }
