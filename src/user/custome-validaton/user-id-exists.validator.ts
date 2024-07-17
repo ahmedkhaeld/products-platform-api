@@ -6,14 +6,14 @@ import {
   registerDecorator,
   ValidationOptions,
 } from 'class-validator';
-import { UserService } from '../user.service';
+import { UserService } from '../service/user.service';
 
 @ValidatorConstraint({ name: 'IsUserIdExist', async: true })
 @Injectable()
 export class IsUserIdExistValidator implements ValidatorConstraintInterface {
   constructor(private userService: UserService) {}
 
-  public async validate(value: string) {
+  public async validate(value: number) {
     if (value == null) return false;
 
     const userDoc = await this.userService.getUser(value);

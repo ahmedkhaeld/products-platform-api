@@ -8,5 +8,5 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {}
 export class UpdateUserParamDto {
   @IsNotEmpty()
   @IsUserIdExist()
-  id: string;
+  id: number;
 }

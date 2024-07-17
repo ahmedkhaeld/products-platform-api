@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from '../dto/create-user.dto';
+import { UpdateUserDto } from '../dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { ServiceResponse } from '../common/service-response';
+import { User } from '../entities/user.entity';
+import { ServiceResponse } from '../../common/service-response';
 import * as bcryptjs from 'bcryptjs';
 
 @Injectable()
@@ -49,9 +49,8 @@ export class UserService {
    * @returns promise of user
    * @param id
    */
-  async getUser(id: string): Promise<User> {
-    const _id = parseInt(id);
-    return this.userRepository.findOneBy({ id: _id });
+  async getUser(id: number): Promise<User> {
+    return this.userRepository.findOneBy({ id: id });
   }
 
   async getUserByUsername(username: string): Promise<User> {
@@ -69,13 +68,12 @@ export class UserService {
    * @param updateUserDto this is partial type of createUserDto.
    * @returns promise of update user
    */
-  async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    const _id = parseInt(id);
+  async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const user: User = new User();
     user.email = updateUserDto.email;
     user.username = updateUserDto.username;
     user.password = updateUserDto.password;
-    user.id = _id;
+    user.id = id;
     return this.userRepository.save(user);
   }
 
@@ -84,8 +82,15 @@ export class UserService {
    * @param id is the type of number, which represent id of user
    * @returns number of rows deleted or affected
    */
-  removeUser(id: string): Promise<{ affected?: number }> {
+  removeUser(id: number): Promise<{ affected?: number }> {
+    return this.userRepository.delete(id);
+  }
+
+  async getUserWithSubscriptionsService(id: string) {
     const _id = parseInt(id);
-    return this.userRepository.delete(_id);
+    return this.userRepository.findOne({
+      where: { id: _id },
+      relations: ['subscriptions'],
+    });
   }
 }
