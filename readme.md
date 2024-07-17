@@ -23,3 +23,18 @@ base on the `docker-compose.yml` file
 
 - `npm install`
 - `npm run start:dev`
+
+
+### Environment Variables
+
+```
+APP=products-api
+PORT=3000
+NODE_ENV=dev
+PG_HOST=localhost
+PG_PORT=5432
+PG_USER=user
+PG_PASS=password
+PG_NAME=products-platform
+
+```
